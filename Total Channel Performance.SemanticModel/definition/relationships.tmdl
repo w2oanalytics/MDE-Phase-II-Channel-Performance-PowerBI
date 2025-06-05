@@ -1,0 +1,10 @@
+relationship 7d93038f-4f73-46d8-83aa-07f4a5ff5ef9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Channel.date
+	toColumn: LocalDateTable_1bd5cd16-c56b-4234-9244-22b52dc8a5f3.Date
+
+relationship f98d97db-22f3-4910-9ea1-510d0a64c1cd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Channel.ReportingPeriod
+	toColumn: LocalDateTable_f86f2855-caa9-433b-99e2-c34950873de4.Date
+

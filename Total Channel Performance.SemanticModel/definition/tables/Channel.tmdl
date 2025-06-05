@@ -1,0 +1,474 @@
+table Channel
+	lineageTag: 44b4578f-f926-4f68-b8b8-34df1641a33d
+
+	measure CTR = DIVIDE(SUM(Channel[clicks]), SUM(Channel[impressions]))
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 2ee61a6e-0506-4e1c-9572-7271ecd88790
+
+	measure CPC = ```
+			DIVIDE(SUM(Channel[spend]), SUM(Channel[clicks])) 
+			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 3064c7c1-6ba1-41f8-95bb-4adba486bc5d
+
+	measure CPM = DIVIDE(SUM(Channel[spend]), SUM(Channel[impressions]))*1000
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: d2d4cbcb-63c1-4433-a037-b5a842dd00dd
+
+	measure PreviousMonthSpend = CALCULATE(SUM(Channel[spend]), DATEADD(Channel[date].[Date],-1,MONTH))
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: c1ec3e67-bfa0-4baf-9d59-ed68cb1d7ab0
+
+	measure MoMSpend = DIVIDE(SUM(Channel[spend]) - [PreviousMonthSpend], [PreviousMonthSpend])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: f0c093e6-6969-4395-8927-ba35a7343fa7
+
+	measure Description = VAR _direction = SWITCH( TRUE(), [MoMSpend] >0 , "+", [MoMSpend]<0, "-", "") RETURN _direction & " " & FORMAT([MoMSpend],"##.##%") & " (" & FORMAT([PreviousMonthSpend],"$##.##" & ")")
+		lineageTag: ebc3b6da-24f2-45e3-9e3c-543891e013df
+
+	measure DescriptionColorSpend = SWITCH( TRUE(), [MoMSpend]>0, "#348939", [MoMSpend] <0, "#9B1D1E", "#000000")
+		lineageTag: 659b3dc1-3002-499d-94bd-bdac24f939d4
+
+	measure DescriptionSpend = VAR _direction = SWITCH( TRUE(), [MoMSpend] >0 , UNICHAR(9650), [MoMSpend]<0, UNICHAR(9660), "") RETURN "(" & _direction & FORMAT([MoMSpend],"##.##%") & " MoM)"
+		lineageTag: 8a902b46-4513-4160-8ba2-4bd6c275492b
+
+	measure PreviousMonthImpressions = CALCULATE(SUM(Channel[impressions]), DATEADD(Channel[date].[Date],-1,MONTH))
+		formatString: 0
+		lineageTag: 51d72d0e-8b82-444e-9578-848a9a27e3a4
+
+	measure PreviousMonthClicks = CALCULATE(SUM(Channel[clicks]), DATEADD(Channel[date].[Date],-1,MONTH))
+		formatString: 0
+		lineageTag: 728aa083-c3c7-473b-ace9-b19738fa97f8
+
+	measure MoMClicks = DIVIDE(SUM(Channel[clicks]) - [PreviousMonthClicks], [PreviousMonthClicks])
+		lineageTag: 776e84c1-e0de-4129-b72a-9d0c63c18064
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MoMImpressions = DIVIDE(SUM(Channel[impressions]) - [PreviousMonthImpressions], [PreviousMonthImpressions])
+		lineageTag: 83f6b998-fb66-484c-ab3a-11b88f8bd9af
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure DescriptionClicks = VAR _direction = SWITCH( TRUE(), [MoMClicks] >0 , UNICHAR(9650), [MoMClicks]<0, UNICHAR(9660), "") RETURN "(" & _direction & FORMAT([MoMClicks],"##.##%") & " MoM)"
+		lineageTag: a08c8866-eff7-4a3a-9d70-ec799347fd43
+
+	measure DescriptionImpressions = ```
+			
+			VAR _direction = SWITCH( TRUE(), [MoMImpressions] >0 , UNICHAR(9650), [MoMImpressions]<0, UNICHAR(9660), "") 
+			RETURN "(" & _direction & FORMAT([MoMImpressions],"##.##%") & " MoM)"
+			```
+		lineageTag: 20748e0b-f580-43c2-97c6-8b497efa708f
+
+	measure DescriptionColorImpressions = SWITCH( TRUE(), [MoMImpressions]>0, "#348939", [MoMImpressions] <0, "#9B1D1E", "#000000")
+		lineageTag: 107ce7cc-9a12-4836-84aa-d4a8a9776371
+
+	measure DescriptionColorClicks = SWITCH( TRUE(), [MoMClicks]>0, "#348939", [MoMClicks] <0, "#9B1D1E", "#000000")
+		lineageTag: f8900ecd-36cd-4e82-82e4-75d3d1653c73
+
+	measure PreviousMonthCPM = CALCULATE(DIVIDE(SUM(Channel[spend]), SUM(Channel[impressions]))*1000, DATEADD(Channel[date].[Date],-1,MONTH))
+		lineageTag: d39e952a-550b-44bd-9c04-7d97686c217f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PreviousMonthCTR = CALCULATE(DIVIDE(SUM(Channel[clicks]), SUM(Channel[impressions])), DATEADD(Channel[date].[Date],-1,MONTH))
+		lineageTag: 010d1d3d-2646-463d-85a2-6236bb93520c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PreviousMonthCPC = CALCULATE(DIVIDE(SUM(Channel[spend]), SUM(Channel[clicks])), DATEADD(Channel[date].[Date],-1,MONTH))
+		lineageTag: 0bfe5392-57ab-4fa7-bdf7-4d324e4f34b8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MoMCPM = DIVIDE([CPM] - [PreviousMonthCPM], [PreviousMonthCPM])
+		lineageTag: 8bd89ea0-3b95-49a4-8b3c-d323fb5ee7d1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MoMCTR = DIVIDE([CTR] - [PreviousMonthCTR], [PreviousMonthCTR])
+		lineageTag: ebfda836-b667-4407-866c-2d5efa365966
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MoMCPC = DIVIDE([CPC] - [PreviousMonthCPC], [PreviousMonthCPC])
+		lineageTag: 8afd25fe-a3ef-407b-a512-7fd5fc436d1f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure DescriptionCPM = VAR _direction = SWITCH( TRUE(), [MoMCPM] >0 , UNICHAR(9650), [MoMCPM]<0, UNICHAR(9660), "") RETURN "(" & _direction & FORMAT([MoMCPM],"##.##%") & " MoM)"
+		lineageTag: 5d147761-2cdf-49e2-82f7-1c400235fb80
+
+	measure DescriptionCTR = VAR _direction = SWITCH( TRUE(), [MoMCTR] >0 , UNICHAR(9650), [MoMCTR]<0, UNICHAR(9660), "") RETURN "(" & _direction & FORMAT([MoMCTR],"##.##%") & " MoM)"
+		lineageTag: ee2cfc08-3138-4062-aab7-46af4a3267e7
+
+	measure DescriptionCPC = ```
+			
+			VAR _direction = 
+			    SWITCH( TRUE(), [MoMCPC] >0 , UNICHAR(9650), [MoMCPC]<0, UNICHAR(9660), ""
+			    ) 
+			
+			RETURN "(" & _direction & FORMAT([MoMCPC],"##.##%") & " MoM)"
+			```
+		lineageTag: 1c336bf3-2cd0-43f7-a3f6-7a44abdaa809
+
+	measure DescriptionColorCPM = SWITCH( TRUE(), [MoMCPM]>0, "#348939", [MoMCPM] <0, "#9B1D1E", "#000000")
+		lineageTag: 695437c5-ba9f-4037-ae03-186df66ef3e4
+
+	measure DescriptionColorCTR = SWITCH( TRUE(), [MoMCTR]>0, "#348939", [MoMCTR] <0, "#9B1D1E", "#000000")
+		lineageTag: 56dfbb39-c2a6-43fb-872e-73c81f4976b9
+
+	measure DescriptionColorCPC = SWITCH( TRUE(), [MoMCPC]>0, "#348939", [MoMCPC] <0, "#9B1D1E", "#000000")
+		lineageTag: 74ef75e8-0e17-430e-84c4-73a01b637e01
+
+	measure 'CPC MoM% Dynamic' = ```
+			
+			
+			VAR _LatestVisiblePeriod = MAX(Channel[ReportingPeriod])
+			
+			VAR _CurrentMonthStart = 
+			    CALCULATE(
+			        MIN('Channel'[date]),
+			        Channel[ReportingPeriod] = _LatestVisiblePeriod
+			    )
+			
+			VAR _PreviousMonthvalue = 
+			    CALCULATE(
+			        [CPC],
+			        REMOVEFILTERS(Channel),
+			        DATESBETWEEN(
+			            Channel[date],
+			            EOMONTH(_CurrentMonthStart, -3) + 1,
+			            EOMONTH(_CurrentMonthStart, -2)
+			        )
+			    )
+			
+			VAR _CurrentMonthvalue = 
+			    CALCULATE(
+			        [CPC],
+			        REMOVEFILTERS(Channel),
+			        DATESBETWEEN(
+			            Channel[date],
+			            EOMONTH(_CurrentMonthStart, -2) + 1,
+			            EOMONTH(_CurrentMonthStart, -1)
+			        )
+			    )   
+			
+			VAR _Result = 
+			     IF(
+			        _PreviousMonthvalue > 0,
+			        (_CurrentMonthvalue - _PreviousMonthvalue) / _PreviousMonthvalue, BLANK())
+			
+			VAR _direction = 
+			    SWITCH( TRUE(), _Result >0 , UNICHAR(9650), _Result<0, UNICHAR(9660), ""
+			    ) 
+			
+			
+			RETURN "(" & _direction & FORMAT(_Result,"##.##%") & " MoM)"
+			
+			```
+		lineageTag: c0c7a9c6-f799-4510-9f7a-cf9006200e9d
+
+	measure 'CPC Color' = ```
+			
+			
+			VAR _LatestVisiblePeriod = MAX(Channel[ReportingPeriod])
+			
+			VAR _CurrentMonthStart = 
+			    CALCULATE(
+			        MIN('Channel'[date]),
+			        Channel[ReportingPeriod] = _LatestVisiblePeriod
+			    )
+			
+			VAR _PreviousMonthvalue = 
+			    CALCULATE(
+			        [CPC],
+			        REMOVEFILTERS(Channel),
+			        DATESBETWEEN(
+			            Channel[date],
+			            EOMONTH(_CurrentMonthStart, -3) + 1,
+			            EOMONTH(_CurrentMonthStart, -2)
+			        )
+			    )
+			
+			VAR _CurrentMonthvalue = 
+			    CALCULATE(
+			        [CPC],
+			        REMOVEFILTERS(Channel),
+			        DATESBETWEEN(
+			            Channel[date],
+			            EOMONTH(_CurrentMonthStart, -2) + 1,
+			            EOMONTH(_CurrentMonthStart, -1)
+			        )
+			    )   
+			
+			VAR _Result = 
+			     IF(
+			        _PreviousMonthvalue > 0,
+			        (_CurrentMonthvalue - _PreviousMonthvalue) / _PreviousMonthvalue, BLANK())
+			
+			
+			
+			VAR _color = 
+			    SWITCH( 
+			        TRUE(), 
+			        _Result>0, "#348939", 
+			        _Result <0, "#9B1D1E", 
+			        "#000000"
+			    )
+			
+			RETURN _color
+			```
+		lineageTag: 46b10561-7661-4b41-992f-94433d4328a3
+
+	measure 'Spend MoM% Dynamic' = ```
+			
+			
+			VAR _LatestVisiblePeriod = MAX(Channel[ReportingPeriod])
+			
+			VAR _CurrentMonthStart = 
+			    CALCULATE(
+			        MIN('Channel'[date]),
+			        Channel[ReportingPeriod] = _LatestVisiblePeriod
+			    )
+			
+			VAR _PreviousMonth = 
+			    CALCULATE(
+			        SUM(Channel[spend]),
+			        REMOVEFILTERS(Channel),
+			        DATESBETWEEN(
+			            Channel[date],
+			            EOMONTH(_CurrentMonthStart, -3) + 1,
+			            EOMONTH(_CurrentMonthStart, -2)
+			        )
+			    )
+			
+			VAR _CurrentMonth = 
+			    CALCULATE(
+			        SUM(Channel[spend]),
+			        REMOVEFILTERS(Channel),
+			        DATESBETWEEN(
+			            Channel[date],
+			            EOMONTH(_CurrentMonthStart, -2) + 1,
+			            EOMONTH(_CurrentMonthStart, -1)
+			        )
+			    )   
+			
+			VAR _Result = 
+			     IF(
+			        _PreviousMonth > 0,
+			        (_CurrentMonth - _PreviousMonth) / _PreviousMonth, BLANK())
+			
+			VAR _direction = 
+			    SWITCH( TRUE(), _Result >0 , UNICHAR(9650), _Result<0, UNICHAR(9660), ""
+			    ) 
+			
+			
+			RETURN "(" & _direction & FORMAT(_Result,"##.##%") & " MoM)"
+			```
+		lineageTag: b46cad39-fae8-462c-bc07-1e3d141f9a33
+
+	measure 'Spend Color' = ```
+			
+			
+			VAR _LatestVisiblePeriod = MAX(Channel[ReportingPeriod])
+			
+			VAR _CurrentMonthStart = 
+			    CALCULATE(
+			        MIN('Channel'[date]),
+			        Channel[ReportingPeriod] = _LatestVisiblePeriod
+			    )
+			
+			VAR _PreviousMonthvalue = 
+			    CALCULATE(
+			        SUM(Channel[spend]),
+			        REMOVEFILTERS(Channel),
+			        DATESBETWEEN(
+			            Channel[date],
+			            EOMONTH(_CurrentMonthStart, -3) + 1,
+			            EOMONTH(_CurrentMonthStart, -2)
+			        )
+			    )
+			
+			VAR _CurrentMonthvalue = 
+			    CALCULATE(
+			        SUM(Channel[spend]),
+			        REMOVEFILTERS(Channel),
+			        DATESBETWEEN(
+			            Channel[date],
+			            EOMONTH(_CurrentMonthStart, -2) + 1,
+			            EOMONTH(_CurrentMonthStart, -1)
+			        )
+			    )   
+			
+			VAR _Result = 
+			     IF(
+			        _PreviousMonthvalue > 0,
+			        (_CurrentMonthvalue - _PreviousMonthvalue) / _PreviousMonthvalue, BLANK())
+			
+			
+			
+			VAR _color = 
+			    SWITCH( 
+			        TRUE(), 
+			        _Result>0, "#348939", 
+			        _Result <0, "#9B1D1E", 
+			        "#000000"
+			    )
+			
+			RETURN _color
+			```
+		lineageTag: 5e183af0-a783-4aac-93e4-ef714c51853e
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f1796d53-5f22-4beb-a669-c62a510a5b0a
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 7d93038f-4f73-46d8-83aa-07f4a5ff5ef9
+			defaultHierarchy: LocalDateTable_1bd5cd16-c56b-4234-9244-22b52dc8a5f3.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column quarter
+		dataType: string
+		lineageTag: 58018acc-3132-48a0-a5a8-6fd46acbac88
+		summarizeBy: none
+		sourceColumn: quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: string
+		lineageTag: ca1481da-9891-4faf-9d2d-c0261c18d029
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column channel
+		dataType: string
+		lineageTag: 01da8d7a-7224-4347-9da8-ad89ca4dd9f7
+		summarizeBy: none
+		sourceColumn: channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column spend
+		dataType: double
+		lineageTag: e99ba02b-8984-4dde-a775-ac2359c8e256
+		summarizeBy: sum
+		sourceColumn: spend
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column impressions
+		dataType: int64
+		formatString: 0
+		lineageTag: c2c63b6a-123b-47c9-89e9-f0e6fa9e55a0
+		summarizeBy: sum
+		sourceColumn: impressions
+
+		annotation SummarizationSetBy = Automatic
+
+	column clicks
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b76cefa-a88a-46ed-8f65-659f13a31bfb
+		summarizeBy: sum
+		sourceColumn: clicks
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_name
+		dataType: string
+		lineageTag: edfcdaec-685d-4ceb-882d-cd82ed940afb
+		summarizeBy: none
+		sourceColumn: campaign_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_id
+		dataType: string
+		lineageTag: e4a53aee-8260-408e-a7d4-2d3fb0fecaf2
+		summarizeBy: none
+		sourceColumn: campaign_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column ad_name
+		dataType: string
+		lineageTag: 7c708bfa-b254-4f64-992b-8d85b17387e3
+		summarizeBy: none
+		sourceColumn: ad_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column client
+		dataType: string
+		lineageTag: 1ee83d0b-f341-45fb-8edf-50b9238e5dc7
+		summarizeBy: none
+		sourceColumn: client
+
+		annotation SummarizationSetBy = Automatic
+
+	column brand
+		dataType: string
+		lineageTag: b4154f3d-4984-4444-850c-b82004a25f4f
+		summarizeBy: none
+		sourceColumn: brand
+
+		annotation SummarizationSetBy = Automatic
+
+	column source
+		dataType: string
+		lineageTag: 936875bb-2195-4db8-9cd2-b655e017d165
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportingPeriod = FORMAT('Channel'[date], "mmmm yyyy")
+		dataType: dateTime
+		formatString: mmmm yyyy
+		lineageTag: 880f7346-03a6-4426-ac30-32f1cd9721c2
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: f98d97db-22f3-4910-9ea1-510d0a64c1cd
+			defaultHierarchy: LocalDateTable_f86f2855-caa9-433b-99e2-c34950873de4.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	partition Channel = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("realchemistry-nonhealth-prd.cloud.databricks.com", "/sql/1.0/warehouses/dae1fcf7c49a47e1", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    mde_dev_Database = Source{[Name="mde_dev",Kind="Database"]}[Data],
+				    nestlehealthscience_pureencapsulations_Schema = mde_dev_Database{[Name="nestlehealthscience_pureencapsulations",Kind="Schema"]}[Data],
+				    gold_channel_performance_View = nestlehealthscience_pureencapsulations_Schema{[Name="gold_channel_performance",Kind="View"]}[Data],
+				    #"Replaced Value" = Table.ReplaceValue(gold_channel_performance_View,"paid search","Paid Search",Replacer.ReplaceText,{"channel"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","paid social","Paid Social",Replacer.ReplaceText,{"channel"})
+				in
+				    #"Replaced Value1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
