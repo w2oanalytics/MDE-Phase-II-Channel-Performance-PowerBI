@@ -320,6 +320,9 @@ table Channel
 			```
 		lineageTag: 5e183af0-a783-4aac-93e4-ef714c51853e
 
+	measure test = "this is a test measure for github testing, please delete"
+		lineageTag: c40efd18-7ed0-47b1-9795-280f95d1639c
+
 	column date
 		dataType: dateTime
 		formatString: Long Date
